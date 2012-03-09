@@ -10,17 +10,13 @@
  *******************************************************************************/
 package org.eclipse.orion.server.shell.npm;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.orion.server.shell.JSONUtil;
+import org.eclipse.orion.server.shell.SimpleCommandHandler;
 import org.eclipse.orion.server.shell.process.ExternalCommand;
-import org.eclipse.orion.server.shell.process.ExternalProcess;
-import org.eclipse.orion.server.shell.process.ICommandContext;
 import org.eclipse.orion.server.shell.process.ServletExternalCommandHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,27 +26,13 @@ public class ServletNPMHandler extends ServletExternalCommandHandler {
 	
 	public ServletNPMHandler() {
 		super("npm");
-		new CommandHandler("install", this) {
+		new SimpleCommandHandler("install", this) {
 			@Override
-			protected boolean exec(HttpServletRequest request, JSONObject arguments, ICommandContext context, OutputStream out) throws ServletException {
-				try {
-					ExternalProcess process = new ExternalProcess(context, createCommand(arguments), out, out);
-					return true;
-				} catch (JSONException e) {
-					throw new ServletException(e);
-				} catch (IOException e) {
-					e.printStackTrace();
-					throw new ServletException(e);
-				} catch (InterruptedException e) {
-					throw new ServletException(e);
-				}
-			}
-
-			private ExternalCommand createCommand(JSONObject arguments) throws JSONException {
+			protected ExternalCommand createCommand(JSONObject arguments) throws JSONException {
 				List<String> cmdLine = new ArrayList<String>();
 				cmdLine.add("npm");
 				cmdLine.add("install");
-				if (arguments.getBoolean("force")) {
+				if (JSONUtil.getBoolean(arguments, "force")) {
 					cmdLine.add("--force");
 				}
 				JSONArray packages = arguments.getJSONArray("packages");
@@ -58,6 +40,62 @@ public class ServletNPMHandler extends ServletExternalCommandHandler {
 				for (int i = 0; i < length; i++) {
 					cmdLine.add(packages.getString(i));
 				}
+				return new ExternalCommand(cmdLine.toArray(new String[cmdLine.size()]));
+			}
+		};
+		new SimpleCommandHandler("config/list", this) {
+			@Override
+			protected ExternalCommand createCommand(JSONObject arguments) throws JSONException {
+				List<String> cmdLine = new ArrayList<String>();
+				cmdLine.add("npm");
+				cmdLine.add("config");
+				cmdLine.add("list");
+				if (JSONUtil.getBoolean(arguments, "long")) {
+					cmdLine.add("--long");
+				}
+				return new ExternalCommand(cmdLine.toArray(new String[cmdLine.size()]));
+			}
+		};
+		new SimpleCommandHandler("config/get", this) {
+			@Override
+			protected ExternalCommand createCommand(JSONObject arguments) throws JSONException {
+				List<String> cmdLine = new ArrayList<String>();
+				cmdLine.add("npm");
+				cmdLine.add("config");
+				cmdLine.add("get");
+				String key = JSONUtil.getString(arguments, "key");
+				Assert.isNotNull(key);
+				cmdLine.add(key);
+				return new ExternalCommand(cmdLine.toArray(new String[cmdLine.size()]));
+			}
+		};
+		new SimpleCommandHandler("config/set", this) {
+			@Override
+			protected ExternalCommand createCommand(JSONObject arguments) throws JSONException {
+				List<String> cmdLine = new ArrayList<String>();
+				cmdLine.add("npm");
+				cmdLine.add("config");
+				cmdLine.add("set");
+				String key = JSONUtil.getString(arguments, "key");
+				cmdLine.add(key);
+				String value = JSONUtil.getString(arguments, "value");
+				if (value!=null) {
+					cmdLine.add(value);
+				} else {
+					cmdLine.add("true");
+				}
+				return new ExternalCommand(cmdLine.toArray(new String[cmdLine.size()]));
+			}
+		};
+		new SimpleCommandHandler("config/delete", this) {
+			@Override
+			protected ExternalCommand createCommand(JSONObject arguments) throws JSONException {
+				List<String> cmdLine = new ArrayList<String>();
+				cmdLine.add("npm");
+				cmdLine.add("config");
+				cmdLine.add("delete");
+				String key = JSONUtil.getString(arguments, "key");
+				cmdLine.add(key);
 				return new ExternalCommand(cmdLine.toArray(new String[cmdLine.size()]));
 			}
 		};

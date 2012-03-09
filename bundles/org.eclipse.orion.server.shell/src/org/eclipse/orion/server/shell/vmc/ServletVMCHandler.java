@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.orion.server.shell.JSONUtil;
 import org.eclipse.orion.server.shell.process.ExternalCommand;
 import org.eclipse.orion.server.shell.process.ExternalProcess;
 import org.eclipse.orion.server.shell.process.ICommandContext;
@@ -29,7 +30,6 @@ import org.eclipse.orion.server.shell.process.ServletExternalCommandHandler;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-@SuppressWarnings("restriction")
 public class ServletVMCHandler extends ServletExternalCommandHandler {
 
 	/**
@@ -256,10 +256,10 @@ public class ServletVMCHandler extends ServletExternalCommandHandler {
 				cmdLine.add("--path");
 				cmdLine.add(workingDir.getAbsolutePath());
 				String appName = arguments.getString("appname");
-				String mem = getString(arguments, "mem");
-				String instances = getString(arguments, "instances");
-				String url = getString(arguments, "url");
-				boolean noStart = getBoolean(arguments, "no-start");
+				String mem = JSONUtil.getString(arguments, "mem");
+				String instances = JSONUtil.getString(arguments, "instances");
+				String url = JSONUtil.getString(arguments, "url");
+				boolean noStart = JSONUtil.getBoolean(arguments, "no-start");
 				Assert.isLegal(appName!=null);
 				cmdLine.add(appName);
 				addOpt(cmdLine, "--mem", mem);
@@ -267,23 +267,6 @@ public class ServletVMCHandler extends ServletExternalCommandHandler {
 				addOpt(cmdLine, "--no-start", noStart);
 				addOpt(cmdLine, "--instances", instances);
 				return new ExternalCommand(cmdLine);
-			}
-
-			private boolean getBoolean(JSONObject arguments, String key) {
-				if (arguments.has(key) && !arguments.isNull(key)) {
-					try {
-						return arguments.getBoolean(key);
-					} catch (JSONException e) {
-					}
-				}
-				return false;
-			}
-
-			private String getString(JSONObject arguments, String key) {
-				if (arguments.isNull(key)) {
-					return null;
-				}
-				return getString(arguments, key);
 			}
 
 			private void addOpt(List<String> cmdLine, String key, boolean val)  {
