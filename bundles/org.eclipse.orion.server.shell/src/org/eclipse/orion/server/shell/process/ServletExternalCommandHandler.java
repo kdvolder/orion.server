@@ -105,7 +105,7 @@ public class ServletExternalCommandHandler {
 											// stuff???
 			Assert.isTrue(path.segment(0).equals(name));
 			Assert.isTrue(path.segmentCount() >= 2);
-			String command = path.segment(1);
+			String command = path.removeFirstSegments(1).toString();
 			JSONObject arguments = new JSONObject(
 					request.getParameter("arguments"));
 			CommandHandler commandHandler = commandHandlers.get(command);
