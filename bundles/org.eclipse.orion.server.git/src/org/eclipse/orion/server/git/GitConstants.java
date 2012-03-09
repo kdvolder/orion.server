@@ -31,6 +31,8 @@ public class GitConstants {
 
 	public static final String KEY_REMOTE = "RemoteLocation"; //$NON-NLS-1$
 
+	public static final String KEY_COMMAND = "CommandLocation"; //$NON-NLS-1$
+
 	public static final String KEY_REPOSITORY_PATH = "RepositoryPath"; //$NON-NLS-1$
 
 	public static final String KEY_REPOSITORY_STATE = "RepositoryState"; //$NON-NLS-1$
@@ -172,4 +174,6 @@ public class GitConstants {
 	public static final String KEY_TAG_COMMITS = "commits"; //$NON-NLS-1$
 
 	public static final String KEY_TAG_TYPE = "TagType"; //$NON-NLS-1$
+
+	public static final String KEY_COMMAND_ARGS = "Command"; //$NON-NLS-1$
 }

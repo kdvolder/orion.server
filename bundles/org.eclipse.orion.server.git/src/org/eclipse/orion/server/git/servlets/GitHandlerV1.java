@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011 IBM Corporation and others.
+ * Copyright (c) 2011, 2012 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,10 +32,12 @@ public class GitHandlerV1 extends ServletResourceHandler<String> {
 	private ServletResourceHandler<String> remoteHandlerV1;
 	private ServletResourceHandler<String> statusHandlerV1;
 	private ServletResourceHandler<String> tagHandlerV1;
+	private ServletResourceHandler<String> commandHandlerV1;
 
 	GitHandlerV1(ServletResourceHandler<IStatus> statusHandler) {
 		branchHandlerV1 = new GitBranchHandlerV1(statusHandler);
 		cloneHandlerV1 = new GitCloneHandlerV1(statusHandler);
+		commandHandlerV1 = new GitCommandHandlerV1(statusHandler);
 		commitHandlerV1 = new GitCommitHandlerV1(statusHandler);
 		configHandlerV1 = new GitConfigHandlerV1(statusHandler);
 		diffHandlerV1 = new GitDiffHandlerV1(statusHandler);
@@ -63,6 +65,8 @@ public class GitHandlerV1 extends ServletResourceHandler<String> {
 			return branchHandlerV1.handleRequest(request, response, pathString);
 		} else if (infoParts[1].equals(Clone.RESOURCE)) {
 			return cloneHandlerV1.handleRequest(request, response, pathString);
+		} else if (infoParts[1].equals(Command.RESOURCE)) {
+			return commandHandlerV1.handleRequest(request, response, pathString);
 		} else if (infoParts[1].equals(Commit.RESOURCE)) {
 			return commitHandlerV1.handleRequest(request, response, pathString);
 		} else if (infoParts[1].equals(ConfigOption.RESOURCE)) {
