@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.core.runtime.Assert;
@@ -28,7 +27,6 @@ import org.eclipse.core.runtime.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-@SuppressWarnings("restriction")
 public class ServletExternalCommandHandler {
 
 	private String name;

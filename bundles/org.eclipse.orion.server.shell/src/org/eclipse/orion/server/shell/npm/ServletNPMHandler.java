@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.orion.server.shell.JSONUtil;
-import org.eclipse.orion.server.shell.SimpleCommandHandler;
+import org.eclipse.orion.server.shell.ShellCommandHandler;
 import org.eclipse.orion.server.shell.process.ExternalCommand;
 import org.eclipse.orion.server.shell.process.ServletExternalCommandHandler;
 import org.json.JSONArray;
@@ -26,7 +26,7 @@ public class ServletNPMHandler extends ServletExternalCommandHandler {
 	
 	public ServletNPMHandler() {
 		super("npm");
-		new SimpleCommandHandler("install", this) {
+		new ShellCommandHandler("install", this) {
 			@Override
 			protected ExternalCommand createCommand(JSONObject arguments) throws JSONException {
 				List<String> cmdLine = new ArrayList<String>();
@@ -43,7 +43,7 @@ public class ServletNPMHandler extends ServletExternalCommandHandler {
 				return new ExternalCommand(cmdLine.toArray(new String[cmdLine.size()]));
 			}
 		};
-		new SimpleCommandHandler("config/list", this) {
+		new ShellCommandHandler("config/list", this) {
 			@Override
 			protected ExternalCommand createCommand(JSONObject arguments) throws JSONException {
 				List<String> cmdLine = new ArrayList<String>();
@@ -56,7 +56,7 @@ public class ServletNPMHandler extends ServletExternalCommandHandler {
 				return new ExternalCommand(cmdLine.toArray(new String[cmdLine.size()]));
 			}
 		};
-		new SimpleCommandHandler("config/get", this) {
+		new ShellCommandHandler("config/get", this) {
 			@Override
 			protected ExternalCommand createCommand(JSONObject arguments) throws JSONException {
 				List<String> cmdLine = new ArrayList<String>();
@@ -69,7 +69,7 @@ public class ServletNPMHandler extends ServletExternalCommandHandler {
 				return new ExternalCommand(cmdLine.toArray(new String[cmdLine.size()]));
 			}
 		};
-		new SimpleCommandHandler("config/set", this) {
+		new ShellCommandHandler("config/set", this) {
 			@Override
 			protected ExternalCommand createCommand(JSONObject arguments) throws JSONException {
 				List<String> cmdLine = new ArrayList<String>();
@@ -87,7 +87,7 @@ public class ServletNPMHandler extends ServletExternalCommandHandler {
 				return new ExternalCommand(cmdLine.toArray(new String[cmdLine.size()]));
 			}
 		};
-		new SimpleCommandHandler("config/delete", this) {
+		new ShellCommandHandler("config/delete", this) {
 			@Override
 			protected ExternalCommand createCommand(JSONObject arguments) throws JSONException {
 				List<String> cmdLine = new ArrayList<String>();

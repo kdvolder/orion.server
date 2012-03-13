@@ -24,9 +24,9 @@ import org.eclipse.orion.server.shell.process.ServletExternalCommandHandler.Comm
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public abstract class SimpleCommandHandler extends CommandHandler {
+public abstract class ShellCommandHandler extends CommandHandler {
 
-	public SimpleCommandHandler(String commandPath, ServletExternalCommandHandler owner) {
+	public ShellCommandHandler(String commandPath, ServletExternalCommandHandler owner) {
 		super(commandPath, owner);
 	}
 

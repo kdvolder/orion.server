@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.orion.server.shell.JSONUtil;
+import org.eclipse.orion.server.shell.ShellCommandHandler;
 import org.eclipse.orion.server.shell.process.ExternalCommand;
 import org.eclipse.orion.server.shell.process.ExternalProcess;
 import org.eclipse.orion.server.shell.process.ICommandContext;
@@ -36,7 +37,7 @@ public class ServletVMCHandler extends ServletExternalCommandHandler {
 	 * Simple template implementation for a basic VMC command that expects as 
 	 * single 'app-name' argument. Examples of such commands: 'start', 'stop', 'restart', ...
 	 */
-	private static class SimpleVMCCommandHandler extends CommandHandler {
+	private static class SimpleVMCCommandHandler extends ShellCommandHandler {
 
 		public SimpleVMCCommandHandler(String name,
 				ServletExternalCommandHandler owner) {
@@ -45,23 +46,7 @@ public class ServletVMCHandler extends ServletExternalCommandHandler {
 		}
 		
 		@Override
-		protected boolean exec(HttpServletRequest request, JSONObject arguments, ICommandContext context, OutputStream out) throws ServletException {
-			try {
-				ExternalProcess process = new ExternalProcess(context, createCommand(request, arguments), out, out);
-				return true;
-			} catch (JSONException e) {
-				throw new ServletException(e);
-			} catch (IOException e) {
-				e.printStackTrace();
-				throw new ServletException(e);
-			} catch (InterruptedException e) {
-				throw new ServletException(e);
-			} catch (CoreException e) {
-				throw new ServletException(e);
-			}
-		}
-
-		private ExternalCommand createCommand(HttpServletRequest request, JSONObject arguments) throws JSONException, CoreException, IOException {
+		protected ExternalCommand createCommand(JSONObject arguments) throws JSONException {
 			List<String> cmdLine = new ArrayList<String>();
 			cmdLine.add("vmc");
 			cmdLine.add(getName());
@@ -72,10 +57,11 @@ public class ServletVMCHandler extends ServletExternalCommandHandler {
 			ExternalCommand cmd = new ExternalCommand(cmdLine);
 			return cmd;
 		}
+
 	}
 
 	private static final String[] SIMPLE_COMMANDS = {
-		"start", "stop", "restart", "delete"
+		"start", "stop", "restart", "delete", "update"
 	};
 	
 	private ExternalCommand createTargetCommand(JSONObject arguments) throws JSONException {
@@ -83,8 +69,9 @@ public class ServletVMCHandler extends ServletExternalCommandHandler {
 		cmdLine.add("vmc");
 		cmdLine.add("target");
 		defaultOptions(cmdLine);
-		if (arguments.has("target")) {
-			cmdLine.add(arguments.getString("target"));
+		String target = JSONUtil.getString(arguments, "target");
+		if (target!=null) {
+			cmdLine.add(target);
 		}
 		return new ExternalCommand(cmdLine);
 	}
@@ -99,23 +86,23 @@ public class ServletVMCHandler extends ServletExternalCommandHandler {
 			new SimpleVMCCommandHandler(name, this);
 		}
 		
-		new CommandHandler("get-target", this) {
-			@Override
-			protected boolean exec(HttpServletRequest request, JSONObject arguments, ICommandContext context, OutputStream out) throws ServletException {
-				try {
-					ExternalProcess process = new ExternalProcess(context, createTargetCommand(arguments), out, out);
-					return true;
-				} catch (JSONException e) {
-					throw new ServletException(e);
-				} catch (IOException e) {
-					e.printStackTrace();
-					throw new ServletException(e);
-				} catch (InterruptedException e) {
-					throw new ServletException(e);
-				}
-			}
-		};
-		new CommandHandler("set-target", this) {
+//		new CommandHandler("get-target", this) {
+//			@Override
+//			protected boolean exec(HttpServletRequest request, JSONObject arguments, ICommandContext context, OutputStream out) throws ServletException {
+//				try {
+//					ExternalProcess process = new ExternalProcess(context, createTargetCommand(arguments), out, out);
+//					return true;
+//				} catch (JSONException e) {
+//					throw new ServletException(e);
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//					throw new ServletException(e);
+//				} catch (InterruptedException e) {
+//					throw new ServletException(e);
+//				}
+//			}
+//		};
+		new CommandHandler("target", this) {
 			@Override
 			protected boolean exec(HttpServletRequest request, JSONObject arguments, ICommandContext context, OutputStream out) throws ServletException {
 				try {
